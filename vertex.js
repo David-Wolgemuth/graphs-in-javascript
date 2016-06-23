@@ -1,5 +1,9 @@
 // Vertex Object
 
+module.exports = Vertex;
+
+var Edge = require("./edge.js");
+
 function Vertex (id)
 {
     this.id = id;

@@ -1,5 +1,10 @@
 // Graph Object
 
+module.exports = Graph;
+
+var Vertex = require("./vertex.js");
+var Edge = require("./edge.js");
+
 function Graph ()
 {
     this.vertices = {};
@@ -32,27 +37,45 @@ Graph.prototype.addEdge = function(from, to, weight, twoWay)
 
 Graph.prototype.resetVisited = function()
 {
-    for (var id in vertices) {
-        vertices[id].visited = false;
+    for (var id in this.vertices) {
+        this.vertices[id].visited = false;
     }    
 };
 
-Graph.prototype.areConnected = function(vertexA, vertextB)
+Graph.prototype.pathExistsBetweenVertices = function(vertexA, vertexB)
 {
     this.resetVisited();
-    if (!vertexA || !vertextB) {
+    var self = this;
+    return pathExistsBetweenVertices(vertexA, vertexB);
+    function pathExistsBetweenVertices (vertexA, vertexB)
+    {
+        if (!vertexA || !vertexB) {
+            return false;
+        }
+        if (!self.vertices[vertexA] || !self.vertices[vertexB]) {
+            return false;
+        }
+        var edges = self.vertices[vertexA].connections;
+        for (var key in edges) {
+            var to = edges[key].to;
+            if (self.vertices[to].visited) {
+                continue;
+            }
+            self.vertices[to].visited = true;
+            if (to === vertexB || pathExistsBetweenVertices(to, vertexB)) {
+                return true;
+            }
+        }
         return false;
     }
-    var connected = false;
-    for (var id in this.vertices[vertexA]) {
-        if (this.vertices[id].visited) {
-            continue;
-        }
-        this.vertices[id].visited = true;
-        if (this.areConnected(id, vertextB)) {
-            connected = true;
-            break;
+};
+
+Graph.prototype.size = function() {
+    var count = 0;
+    for (id in this.vertices) {
+        if (this.vertices.hasOwnProperty(id)) {
+            count++;
         }
     }
-    return connected;
+    return count;
 };
