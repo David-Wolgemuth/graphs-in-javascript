@@ -42,7 +42,7 @@ Graph.prototype.resetVisited = function()
     }    
 };
 
-Graph.prototype.pathExistsBetweenVertices = function(vertexA, vertexB)
+Graph.prototype.pathExistsBetweenVertices = function(vertexA, vertexB)  // Depth First Search
 {
     this.resetVisited();
     var self = this;
