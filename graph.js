@@ -20,7 +20,7 @@ Graph.prototype.addVertex = function(id)
 
 Graph.prototype.addEdge = function(from, to, twoWay)
 {
-    if (from === to || !from || !to) {
+    if (!from || !to) {
         return;
     }
     if (!this.vertices[from]) {
@@ -35,48 +35,72 @@ Graph.prototype.addEdge = function(from, to, twoWay)
     }
 };
 
-Graph.prototype.resetVisited = function()
+Graph.prototype.resetVisited = function ()
 {
     for (var id in this.vertices) {
         this.vertices[id].visited = false;
     }    
 };
 
-Graph.prototype.pathExistsBetweenVertices = function(vertexA, vertexB)  // Depth First Search
+Graph.prototype.allConnections = function (vertex)  // Depth First Search
 {
     this.resetVisited();
-    var self = this;
-    return pathExistsBetweenVertices(vertexA, vertexB);
-    function pathExistsBetweenVertices (vertexA, vertexB)
-    {
-        if (!vertexA || !vertexB) {
-            return false;
+    var vertices = [];
+    this._allConnections(vertex, vertices);
+    return vertices;
+};
+
+Graph.prototype._allConnections = function (vertex, vertices)
+{
+    if (!vertex || !this.vertices[vertex]) {
+        return;
+    }
+    var edges = this.vertices[vertex].connections;
+    for (var key in edges) {
+        var to = edges[key].to;
+        if (this.vertices[to].visited) {
+            continue;
         }
-        if (!self.vertices[vertexA] || !self.vertices[vertexB]) {
-            return false;
-        }
-        var edges = self.vertices[vertexA].connections;
-        for (var key in edges) {
-            var to = edges[key].to;
-            if (self.vertices[to].visited) {
-                continue;
-            }
-            self.vertices[to].visited = true;
-            if (to === vertexB || pathExistsBetweenVertices(to, vertexB)) {
-                return true;
-            }
-        }
+        vertices.push(to);
+        this.vertices[to].visited = true;
+        this._allConnections(to, vertices);
+    }
+};
+
+Graph.prototype.pathExists = function(vertexA, vertexB)  // Depth First Search
+{
+    this.resetVisited();
+    return this._pathExists(vertexA, vertexB);
+};
+
+Graph.prototype._pathExists = function  (vertexA, vertexB)
+{
+    if (!vertexA || !vertexB) {
         return false;
     }
+    if (!this.vertices[vertexA] || !this.vertices[vertexB]) {
+        return false;
+    }
+    var edges = this.vertices[vertexA].connections;
+    for (var key in edges) {
+        var to = edges[key].to;
+        if (this.vertices[to].visited) {
+            continue;
+        }
+        this.vertices[to].visited = true;
+        if (to === vertexB || this._pathExists(to, vertexB)) {
+            return true;
+        }
+    }
+    return false;
 };
 
 Graph.prototype.size = function() {
     var count = 0;
-    for (id in this.vertices) {
+    for (var id in this.vertices) {
         if (this.vertices.hasOwnProperty(id)) {
             count++;
         }
     }
     return count;
 };
-

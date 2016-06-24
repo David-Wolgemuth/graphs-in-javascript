@@ -56,32 +56,67 @@ describe("Graph", function () {
         });
     });
 
-    describe("`.pathExistsBetweenVertices(vertexA, vertexB)` method", function () {
+    describe("`.allConnections(vertex)` method", function () {
+        var graph = testGraphBasedOnImageA();
+
+        var notConnectedToA = ["A", "T", "M"];  // No Circular Connections?
+        var connectedToP = ["P", "N", "O", "Q"];
+
+        var aConnections = graph.allConnections("A");
+        var pConnections = graph.allConnections("P");
+
+        it("contains all connections including adjacent / distant / through loops / self-connections", function () {
+            for (var id in graph.vertices) {
+                if (notConnectedToA.indexOf(id) < 0) {
+                    expect(aConnections.indexOf(id)).not.toBeLessThan(0, id);
+                }
+                if (connectedToP.indexOf(id) >= 0) {
+                    expect(pConnections.indexOf(id)).not.toBeLessThan(0, id);
+                }
+            }
+            expect(graph.allConnections("H")).toEqual(["H"]);
+        });
+        it("ignores vertices that are not connected and origin, unless connected", function () {
+            for (var id in graph.vertices) {
+                if (connectedToP.indexOf(id) < 0) {
+                    expect(pConnections.indexOf(id)).toBeLessThan(0, id);
+                }
+                if (notConnectedToA.indexOf(id) >= 0) {
+                    expect(aConnections.indexOf(id)).toBeLessThan(0, id);
+                }
+            }
+        });
+
+
+    });
+
+    describe("`.pathExists(vertexA, vertexB)` method", function () {
         var graph = testGraphBasedOnImageA();
 
         it("returns true for adjacent vertices", function () {
-            expect(graph.pathExistsBetweenVertices("A", "B"));
-            expect(graph.pathExistsBetweenVertices("J", "N"));
-            expect(graph.pathExistsBetweenVertices("L", "K"));
+            expect(graph.pathExists("A", "B")).toBe(true);
+            expect(graph.pathExists("J", "N")).toBe(true);
+            expect(graph.pathExists("L", "K")).toBe(true);
         });
 
         it("returns false for unconnected vertices", function () {
-            expect(graph.pathExistsBetweenVertices("A", "M")).toBe(false);
-            expect(graph.pathExistsBetweenVertices("L", "A")).toBe(false);
-            expect(graph.pathExistsBetweenVertices("B", "A")).toBe(false);
-            expect(graph.pathExistsBetweenVertices("J", "M")).toBe(false);
+            expect(graph.pathExists("A", "M")).toBe(false);
+            expect(graph.pathExists("L", "A")).toBe(false);
+            expect(graph.pathExists("B", "A")).toBe(false);
+            expect(graph.pathExists("J", "M")).toBe(false);
         });
 
         it("returns true for edges requiring multilple steps", function () {
-            expect(graph.pathExistsBetweenVertices("A", "Q"));
-            expect(graph.pathExistsBetweenVertices("G", "P"));
-            expect(graph.pathExistsBetweenVertices("M", "O"));
-            expect(graph.pathExistsBetweenVertices("I", "P"));
+            expect(graph.pathExists("A", "Q")).toBe(true);
+            expect(graph.pathExists("G", "P")).toBe(true);
+            expect(graph.pathExists("M", "O")).toBe(true);
+            expect(graph.pathExists("I", "P")).toBe(true);
         });
 
-        it("returns true if edges form a loop back to origin `pathExistsBetweenVertices(a, a)`", function () {
-            expect(graph.pathExistsBetweenVertices("N", "N"));
-            expect(graph.pathExistsBetweenVertices("L", "L"));
+        it("returns true if edges form a loop back to origin or self-connected nodes `pathExists(a, a)`", function () {
+            expect(graph.pathExists("N", "N")).toBe(true);
+            expect(graph.pathExists("L", "L")).toBe(true);
+            expect(graph.pathExists("H", "H")).toBe(true); // Why isn't this breaking?
         });
     });
 
@@ -95,7 +130,7 @@ function testGraphInWithXNodes (count)
         graph.addVertex("vertex-" + i);
     }
     return graph; 
-};
+}
 
 function testGraphBasedOnImageA ()
 {
@@ -113,6 +148,9 @@ function testGraphBasedOnImageA ()
     // C
     graph.addEdge("C", "H");
 
+    // H
+    graph.addEdge("H", "H");
+
     // E
     graph.addEdge("E", "I", true); 
     graph.addEdge("E", "J");
@@ -123,6 +161,18 @@ function testGraphBasedOnImageA ()
 
     // F
     graph.addEdge("F", "K");
+
+    // K
+    graph.addEdge("K", "R");
+
+    // R
+    graph.addEdge("R", "S", true);
+
+    // S
+    graph.addEdge("S", "L");
+
+    // T
+    graph.addEdge("T", "L");
 
     // L
     graph.addEdge("L", "K");
@@ -143,6 +193,6 @@ function testGraphBasedOnImageA ()
 
     // O
     graph.addEdge("O", "Q");
-    
+
     return graph;
-};
+}
