@@ -12,7 +12,7 @@ function Vertex (id)
     this.connections = {};
 }
 
-Vertex.prototype.connect = function(vertexId, weight)
+Vertex.prototype.connect = function(vertexId)
 {
-    this.connections[vertexId] = new Edge(this.id, vertexId, weight);
+    this.connections[vertexId] = new Edge(this.id, vertexId);
 };

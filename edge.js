@@ -2,9 +2,8 @@
 
 module.exports = Edge;
 
-function Edge (from, to, weight)
+function Edge (from, to)
 {
     this.from = from;
     this.to = to;
-    this.weight = weight;
 }

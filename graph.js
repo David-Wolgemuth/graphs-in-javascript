@@ -18,7 +18,7 @@ Graph.prototype.addVertex = function(id)
     this.vertices[id] = new Vertex(id);
 };
 
-Graph.prototype.addEdge = function(from, to, weight, twoWay)
+Graph.prototype.addEdge = function(from, to, twoWay)
 {
     if (from === to || !from || !to) {
         return;
@@ -29,9 +29,9 @@ Graph.prototype.addEdge = function(from, to, weight, twoWay)
     if (!this.vertices[to]) {
         this.addVertex(to);
     }
-    this.vertices[from].connect(to, weight);
+    this.vertices[from].connect(to);
     if (twoWay) {
-        this.vertices[to].connect(from, weight);
+        this.vertices[to].connect(from);
     }
 };
 
@@ -79,3 +79,4 @@ Graph.prototype.size = function() {
     }
     return count;
 };
+
