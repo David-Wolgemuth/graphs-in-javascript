@@ -10,6 +10,10 @@ function Graph ()
     this.vertices = {};
 }
 
+Graph.prototype.vertex = function(id)
+{
+    return (this.vertices[id]) ? this.vertices[id] : null;
+};
 Graph.prototype.addVertex = function(id)
 {
     if (this.vertices[id]) {

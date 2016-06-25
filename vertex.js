@@ -6,13 +6,19 @@ var Edge = require("./edge.js");
 
 function Vertex (id)
 {
-    this.id = id;
+    this._id = id;
+    this._edges = {};
 
     this.visited = false;
-    this.connections = {};
 }
-
+Vertex.prototype.edge = function (vertexId)
+{
+    return (this._edges[vertexId]) ? this._edges[vertexId] : null;
+};
 Vertex.prototype.connect = function(vertexId)
 {
-    this.connections[vertexId] = new Edge(this.id, vertexId);
+    if (this._edges[vertexId]) {
+        return;
+    }
+    this._edges[vertexId] = new Edge(this.id, vertexId);
 };

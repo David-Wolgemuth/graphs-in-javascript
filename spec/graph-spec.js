@@ -42,14 +42,14 @@ describe("Graph", function () {
         });
         it("allows access from 'from' to 'to' via `vertex.connections`", function () {
             graph.addEdge("a", "b");
-            var edge = graph.vertices["a"].connections["b"];
+            var edge = graph.vertex("a").connection("b");
             expect(edge).toEqual(jasmine.any(Edge));
             expect(edge.from).toEqual("a");
             expect(edge.to).toEqual("b");
         });
         it("allows access from 'to' to 'from' if twoWay connection", function () {
             graph.addEdge("two", "way", true);  // Final param is `twoWay`
-            var edge = graph.vertices["way"].connections["two"];
+            var edge = graph.vertex("way").connection("two");
             expect(edge).toEqual(jasmine.any(Edge));
             expect(edge.from).toEqual("way");
             expect(edge.to).toEqual("two");
@@ -86,8 +86,6 @@ describe("Graph", function () {
                 }
             }
         });
-
-
     });
 
     describe("`.pathExists(vertexA, vertexB)` method", function () {
