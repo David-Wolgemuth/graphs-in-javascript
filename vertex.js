@@ -7,7 +7,7 @@ var Edge = require("./edge.js");
 function Vertex (id)
 {
     this._id = id;
-    this._edges = {};
+    this.neighbors = {};
     this._visited = false;
 }
 Vertex.prototype.id = function(id)
@@ -37,18 +37,18 @@ Vertex.prototype.eachNeighboringVertex = function(cb, args)
         return;
     }
     args = args || {};
-    for (var key in this._edges) {
-        cb(this._edges[key].to());
+    for (var key in this.neighbors) {
+        cb(this.neighbors[key].to());
     }
 };
 Vertex.prototype.edge = function (vertexId)
 {
-    return (this._edges[vertexId]) ? this._edges[vertexId] : null;
+    return (this.neighbors[vertexId]) ? this.neighbors[vertexId] : null;
 };
 Vertex.prototype.connect = function(vertexId)
 {
-    if (this._edges[vertexId]) {
+    if (this.neighbors[vertexId]) {
         return;
     }
-    this._edges[vertexId] = new Edge(this.id, vertexId);
+    this.neighbors[vertexId] = new Edge(this.id, vertexId);
 };

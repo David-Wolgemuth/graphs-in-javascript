@@ -3,50 +3,62 @@ module.exports = Queue;
 
 function Queue ()
 {
-    this.head = null;
-    this.tail = null;
+    this._head = null;
+    this._tail = null;
+    this._size = 0;
 }
+
+Queue.prototype.size = function()
+{
+    return this._size;
+};
+Queue.prototype.empty = function()
+{
+    return !this._head;
+};
 
 Queue.prototype.first = function()
 {
-    if (!this.head) {
+    if (this.empty()) {
         return null;
     }
-    return this.head.value;
+    return this._head.value;
 };
 
 Queue.prototype.last = function()
 {
-    if (!this.tail) {
+    if (!this._tail) {
         return null;
     }
-    return this.tail.value;
+    return this._tail.value;
 };
 
 Queue.prototype.enqueue = function(value)
 {
     var node = new QNode(value);
-    if (!this.head) {
-        this.head = node;
+    if (!this._head) {
+        this._head = node;
     }
-    if (this.tail) {
-        this.tail.next = node;
+    if (this._tail) {
+        this._tail.next = node;
     }
-    this.tail = node;
+    this._tail = node;
+    this._size++;
 };
 
 Queue.prototype.dequeue = function()
 {
-    if (!this.head) {
+    if (!this._head) {
         return null;
     }
-    var value = this.head.value;
-    if (this.head === this.tail) {
-        this.head = null;
-        this.tail = null;
+    var value = this._head.value;
+    if (this._head === this._tail) {
+        this._head = null;
+        this._tail = null;
     } else {
-        this.head = this.head.next;
+        this._head = this._head.next;
     }
+    this._size--;
     return value;
 };
 

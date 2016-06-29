@@ -60,7 +60,7 @@ Graph.prototype._unvisitAllVertices = function ()
 {
     for (var id in this._vertices) {
         this.vertex(id).unvisit();
-    }    
+    }
 };
 
 Graph.prototype.allConnections = function (vertexId, args)
@@ -131,7 +131,7 @@ Graph.prototype._pathExists = function  (vertexA, vertexB)
     if (typeof vertexA === "undefined" || typeof vertexB === "undefined") {
         return false;
     }
-    if (!this._vertices[vertexA] || !this._vertices[vertexB]) {
+    if (!this.vertex(vertexA) || !this.vertex(vertexB)) {
         return false;
     }
     var found = false;
@@ -146,6 +146,33 @@ Graph.prototype._pathExists = function  (vertexA, vertexB)
         }
     });
     return found;
+};
+
+Graph.prototype.distanceFromAToB = function (vertexA, vertexB)
+{
+    this._unvisitAllVertices();
+    var vertex = this.vertex(vertexA);
+    
+    var queue = new Queue();
+    var self = this;
+    queue.enqueue({ distance: 0, vertex: vertex });
+
+    while (!queue.empty()) {
+        var obj = queue.dequeue();
+        if (obj.vertex.id() === vertexB && obj.distance) {
+            return obj.distance;
+        }
+
+        for (var key in obj.vertex.neighbors) {
+            var neighbor = this.vertex(obj.vertex.neighbors[key].to());
+            if (neighbor.visited()) {
+                continue;
+            }
+            neighbor.visit();
+            queue.enqueue({ distance: obj.distance + 1, vertex: neighbor });
+        }
+    }
+    return -1;
 };
 
 Graph.prototype.size = function() {

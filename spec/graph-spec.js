@@ -79,6 +79,29 @@ describe("Graph", function () {
         });
     });
 
+    describe("`.distanceFromAToB(vertexA, vertexB)` method", function () {
+        var graph = testGraphBasedOnImageA();
+        it("returns `-1` if no path exists", function () {
+            expect(graph.distanceFromAToB("A", "M")).toEqual(-1);
+            expect(graph.distanceFromAToB("K", "T")).toEqual(-1);
+        });
+        it("returns smallest path distance", function () {
+            expect(graph.distanceFromAToB("A", "C")).toEqual(1);
+            expect(graph.distanceFromAToB("A", "H")).toEqual(2);
+            expect(graph.distanceFromAToB("B", "I")).toEqual(2);
+            expect(graph.distanceFromAToB("A", "Q")).toEqual(6);
+            expect(graph.distanceFromAToB("S", "R")).toEqual(1);
+            expect(graph.distanceFromAToB("F", "L")).toEqual(4);
+        });
+        it("returns `-1` if the start and end are the same, unless there's a path", function () {
+            expect(graph.distanceFromAToB("H", "H")).toEqual(1);
+            expect(graph.distanceFromAToB("S", "S")).toEqual(2);
+            expect(graph.distanceFromAToB("K", "K")).toEqual(4);
+            expect(graph.distanceFromAToB("C", "C")).toEqual(-1);
+            expect(graph.distanceFromAToB("J", "J")).toEqual(-1);
+        });
+    });
+
     describe("`.pathExists(vertexA, vertexB)` method", function () {
         var graph = testGraphBasedOnImageA();
 

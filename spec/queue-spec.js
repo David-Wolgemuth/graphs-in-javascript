@@ -18,6 +18,13 @@ describe("Queue", function () {
                 expect(queue.last()).toEqual(arr[i]);
             }
         });
+        it("increases the size by one", function () {
+            queue = new Queue();
+            for (var size = 1; size < 12; size++) {
+                queue.enqueue(size);
+                expect(queue.size()).toEqual(size);
+            }
+        });
     });
     describe("dequeuing a value", function () {
         it("doesn't break if empty queue", function () {
@@ -35,6 +42,19 @@ describe("Queue", function () {
             for (i = 0; i < arr.length; i++) {
                 var value = queue.dequeue();
                 expect(value).toEqual(arr[i]);
+            }
+        });
+        it("decreases the size by 1", function () {
+            var queue = new Queue();
+            for (var size = 0; size < 24; size++) {
+                queue.enqueue("something");
+            }
+            var prev = queue.size();
+            expect(prev).toEqual(24)
+            while (prev > 0) {
+                queue.dequeue();
+                expect(queue.size()).toEqual(prev - 1);
+                prev = queue.size();
             }
         });
     });
