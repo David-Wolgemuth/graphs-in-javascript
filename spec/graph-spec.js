@@ -22,29 +22,6 @@ describe("Graph", function () {
         });
     });
 
-    // describe("connecting vertices with `.addEdge()`", function () {
-    //     var graph = testGraphInWithXNodes(12);
-    //     it("creates new vertices if keys don't exist", function () {
-    //         var sizeBefore = graph.size();
-    //         graph.addEdge("x", "y");
-    //         expect(graph.size()).toEqual(sizeBefore + 2);
-    //     });
-    //     it("allows access from 'from' to 'to' via `vertex.connections`", function () {
-    //         graph.addEdge("a", "b");
-    //         var edge = graph.vertex("a").connection("b");
-    //         expect(edge).toEqual(jasmine.any(Edge));
-    //         expect(edge.from).toEqual("a");
-    //         expect(edge.to).toEqual("b");
-    //     });
-    //     it("allows access from 'to' to 'from' if twoWay connection", function () {
-    //         graph.addEdge("two", "way", true);  // Final param is `twoWay`
-    //         var edge = graph.vertex("way").connection("two");
-    //         expect(edge).toEqual(jasmine.any(Edge));
-    //         expect(edge.from).toEqual("way");
-    //         expect(edge.to).toEqual("two");
-    //     });
-    // });
-
     describe("`.allConnections(vertex)` method", function () {
         var graph = testGraphBasedOnImageA();
 
@@ -74,6 +51,31 @@ describe("Graph", function () {
                     expect(aConnections.indexOf(id)).toBeLessThan(0, id);
                 }
             }
+        });
+
+        describe("`.allConnections(vertex, args)` where arg 'breadthFirst' is true", function () {
+            it("adds vertexes row by row as they radiate from origin", function () {
+                var rows = [
+                    ["A"],
+                    ["B", "C", "D"],
+                    ["E", "G", "H"],
+                    ["I", "J", "F", "K"],
+                    ["N", "R"],
+                    ["P", "O", "S"],
+                    ["Q", "L"]
+                ];
+                var conns = graph.allConnections("A", { breadthFirst: true });
+                var r = 0;
+                while (conns.length && rows.length) {
+                    var c = conns.shift();
+                    var idx = rows[r].indexOf(c);
+                    expect(idx).not.toBeLessThan(0, [c, idx, rows[r]]);
+                    rows[r].splice(idx, 1);
+                    if (!rows[r].length) {
+                        rows.shift();
+                    }
+                }
+            });
         });
     });
 
@@ -106,6 +108,7 @@ describe("Graph", function () {
             expect(graph.pathExists("H", "H")).toBe(true, "H -> H"); // Why isn't this breaking?
         });
     });
+
 
 });
 

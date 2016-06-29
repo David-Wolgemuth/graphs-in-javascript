@@ -4,6 +4,7 @@ module.exports = Graph;
 
 var Vertex = require("./vertex.js");
 var Edge = require("./edge.js");
+var Queue = require("./queue.js");
 
 function Graph ()
 {
@@ -62,11 +63,16 @@ Graph.prototype._unvisitAllVertices = function ()
     }    
 };
 
-Graph.prototype.allConnections = function (vertex)  // Depth First Search
+Graph.prototype.allConnections = function (vertexId, args)
 {
+    args = args || {};
     this._unvisitAllVertices();
     var all = [];
-    this._allConnections(vertex, all);
+    if (args.breadthFirst) {
+        this._allConnectionsBreadthFirst(vertexId, all);
+    } else {
+        this._allConnections(vertexId, all);
+    }
     return all;
 };
 
@@ -78,7 +84,7 @@ Graph.prototype._allConnections = function (vertexId, all)
     }
     var self = this;
     vertex.eachNeighboringVertex(function (neighborId) {
-        neighbor = self.vertex(neighborId);
+        var neighbor = self.vertex(neighborId);
         if (neighbor.visited()) {
             return;
         }
@@ -86,6 +92,32 @@ Graph.prototype._allConnections = function (vertexId, all)
         neighbor.visit();
         self._allConnections(neighborId, all);
     });
+};
+
+Graph.prototype._allConnectionsBreadthFirst = function (vertexId, all)
+{
+    var queue = new Queue();
+    var vertex = this.vertex(vertexId);
+    var self = this;
+
+    if (!vertex) {
+        return;
+    }
+    queue.enqueue(vertex);
+
+    while (queue.first()) {
+        vertex = queue.dequeue();
+        all.push(vertex.id());
+        vertex.eachNeighboringVertex(enqueueNeighbor);
+    }
+    function enqueueNeighbor (neighborId) {
+        var neighbor = self.vertex(neighborId);
+        if (neighbor.visited()) {
+            return;
+        }
+        queue.enqueue(neighbor);
+        neighbor.visit();
+    }
 };
 
 Graph.prototype.pathExists = function(vertexA, vertexB)  // Depth First Search

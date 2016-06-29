@@ -12,7 +12,7 @@ function Vertex (id)
 }
 Vertex.prototype.id = function(id)
 {
-    return id;
+    return this._id;
 };
 Vertex.prototype.is = function(id)
 {
