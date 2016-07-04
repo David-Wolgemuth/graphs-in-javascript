@@ -132,6 +132,37 @@ describe("Graph", function () {
         });
     });
 
+    describe("pathFromAToB", function () {
+        var graph = testGraphBasedOnImageA();
+        it("returns `null` if no path exists", function () {
+            expect(graph.pathFromAToB("A", "A")).toBe(null);
+            expect(graph.pathFromAToB("A", "T")).toBe(null);
+            expect(graph.pathFromAToB("G", "H")).toBe(null);
+            expect(graph.pathFromAToB("Not", "H")).toBe(null);
+            expect(graph.pathFromAToB("A", "A Key")).toBe(null);
+        });
+        it("returns an array of keys showing the shortest path", function () {
+            var paths = [{
+                start: "A", end: "H", expected: ["C", "H"]
+            }, {
+                start: "G", end: "S", expected: ["K", "R", "S"]
+            }, {
+                start: "H", end: "H", expected: ["H"]
+            }, {
+                start: "I", end: "O", expected: ["E", "J", "N", "O"]
+            }, {
+                start: "A", end: "Q", expected: ["B", "E", "J", "N", "O", "Q"]
+            }];
+            for (var p = 0; p < paths.length; p++) {
+                var pathA = paths[p].expected;
+                var pathB = graph.pathFromAToB(paths[p].start, paths[p].end);
+                expect(pathA.length).toEqual(pathB.length, pathA, pathB);
+                for (var i = 0; i < pathA.length; i++) {
+                    expect(pathA[i]).toEqual(pathB[i], i, pathA, pathB);
+                }
+            }
+        });
+    });
 
 });
 

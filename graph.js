@@ -154,7 +154,6 @@ Graph.prototype.distanceFromAToB = function (vertexA, vertexB)
     var vertex = this.vertex(vertexA);
     
     var queue = new Queue();
-    var self = this;
     queue.enqueue({ distance: 0, vertex: vertex });
 
     while (!queue.empty()) {
@@ -185,3 +184,32 @@ Graph.prototype.size = function() {
     return count;
 };
 
+Graph.prototype.pathFromAToB = function (a, b) {
+    if (!this.vertex(a) || !this.vertex(b)) {
+        return null;
+    }
+
+    this._unvisitAllVertices();
+
+    var vertex = this.vertex(a);
+    var queue = new Queue();
+    queue.enqueue({ path: [], vertex: vertex });
+
+    while (!queue.empty()) {
+        var obj = queue.dequeue();
+        if (obj.vertex.id() === b && obj.path.length) {
+            return obj.path;
+        }
+        for (var key in obj.vertex.neighbors) {
+            var neighbor = this.vertex(obj.vertex.neighbors[key].to());
+            if (neighbor.visited()) {
+                continue;
+            }
+            neighbor.visit();
+            var path = obj.path.slice(0);
+            path.push(neighbor.id());
+            queue.enqueue({ path: path, vertex: neighbor });
+        }
+    }
+    return null;
+};
